@@ -9,6 +9,11 @@ const data = {
     text: 'hello world',
 }
 
+/**
+ * target
+ *      -- key
+ *          -- effctFunction
+ */
 const track = (target, key) => {
     if (!activeEffect) {
         return
@@ -27,6 +32,7 @@ const track = (target, key) => {
     deps.add(activeEffect)
 }
 
+// set 操作会触发所有绑定的 effctFunction
 const trigger = (target, key) => {
     const depsMap = bucket.get(target)
     if (!depsMap) {
@@ -39,6 +45,7 @@ const trigger = (target, key) => {
 
 const obj = new Proxy(data, {
     get(target, key) {
+        track(target, key)
         return target[key]
     },
 
@@ -53,6 +60,10 @@ const effect = (fn) => {
     fn()
 }
 
-effect(() => {
-    document.body.innerHTML = obj.text
-})
+const __main = () => {
+    effect(() => {
+        document.body.innerHTML = obj.text
+    })
+}
+
+__main()
